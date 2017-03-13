@@ -34,6 +34,12 @@ void SampleModel::draw()
 	// projection matrix, don't bother with this ...
     ModelerView::draw();
 
+	double torsoRadius = VAL(TORSORADIUS);
+	double torsoHeight = VAL(TORSOHEIGHT);
+	double upperArmLength = VAL(UPPERARMLENGTH);
+	double lowerBodyHeight = VAL(LOWERBODYHEIGHT);
+	double headSize = VAL(HEAD_SCALE);
+
 	// draw the floor
 	setAmbientColor(.1f, .1f, .1f);
 	setDiffuseColor(COLOR_RED);
@@ -51,16 +57,16 @@ void SampleModel::draw()
 			//upper body
 			glPushMatrix();
 			// TODO: change 2.25 to control value (lower body height)
-			glTranslated(-VAL(TORSORADIUS), VAL(LOWERBODYHEIGHT), 0);
-			glScaled(2.0 * VAL(TORSORADIUS), VAL(TORSOHEIGHT), VAL(TORSORADIUS));
+			glTranslated(-torsoRadius, lowerBodyHeight, 0);
+			glScaled(2.0 * torsoRadius, torsoHeight, torsoRadius);
 			drawBox(1, 1, 1);
 			glPopMatrix();
 
 			//head
 			glPushMatrix();
-			glTranslated(0, VAL(LOWERBODYHEIGHT) + VAL(HEAD_Y) + VAL(TORSOHEIGHT), 0.5);
-			glScaled(VAL(HEAD_SCALE), VAL(HEAD_SCALE), VAL(HEAD_SCALE));
-			glTranslated(0, VAL(HEAD_SCALE), 0);
+			glTranslated(0, lowerBodyHeight + VAL(HEAD_Y) + torsoHeight, 0.5);
+			glScaled(headSize, headSize, headSize);
+			glTranslated(0, headSize, 0);
 			glRotated(-90, 1.0, 0.0, 0.0);
 			drawSphere(1);
 			glPopMatrix();
@@ -68,67 +74,79 @@ void SampleModel::draw()
 			//left arm
 			glPushMatrix();
 			//shoulder
-			glTranslated(-1.8 * VAL(TORSORADIUS), VAL(LOWERBODYHEIGHT) + 0.6 * VAL(TORSOHEIGHT), 0);
-			glScaled(0.8 * VAL(TORSORADIUS), 0.8 * VAL(TORSORADIUS), 0.8 * VAL(TORSORADIUS));
+			glTranslated(-1.8 * torsoRadius, lowerBodyHeight + 0.6 * torsoHeight, 0);
+			glScaled(0.8 * torsoRadius, 0.8 * torsoRadius, 0.8 * torsoRadius);
 			drawBox(1, 1, 1);
 			//left upper arm
-			glTranslated(0.05, -VAL(UPPERARMLENGTH), 0.15);
-			glScaled(0.72 * VAL(TORSORADIUS), VAL(UPPERARMLENGTH), 0.72 * VAL(TORSORADIUS));
+			glTranslated(0.05, -upperArmLength, 0.15);
+			glScaled(0.72 * torsoRadius, upperArmLength, 0.72 * torsoRadius);
 			drawBox(1, 1, 1);
 			//left lower arm
-			glTranslated(0.05, -0.8 * VAL(UPPERARMLENGTH), 0.15);
-			glScaled(0.648 * VAL(TORSORADIUS), 0.8 * VAL(UPPERARMLENGTH), 0.648 * VAL(TORSORADIUS));
+			glTranslated(0.05, -0.8 * upperArmLength, 0.15);
+			glScaled(0.648 * torsoRadius, 0.8 * upperArmLength, 0.648 * torsoRadius);
 			drawBox(1, 1, 1);
 			glPopMatrix();
 
 			//right arm
 			glPushMatrix();
 			//shoulder
-			glTranslated(VAL(TORSORADIUS), VAL(LOWERBODYHEIGHT) + 0.6 * VAL(TORSOHEIGHT), 0);
-			glScaled(0.8 * VAL(TORSORADIUS), 0.8 * VAL(TORSORADIUS), 0.8 * VAL(TORSORADIUS));
+			glTranslated(torsoRadius, lowerBodyHeight + 0.6 * torsoHeight, 0);
+			glScaled(0.8 * torsoRadius, 0.8 * torsoRadius, 0.8 * torsoRadius);
 			drawBox(1, 1, 1);
 			//right upper arm
-			glTranslated(0.1, -VAL(UPPERARMLENGTH), 0.15);
-			glScaled(0.72 * VAL(TORSORADIUS), VAL(UPPERARMLENGTH), 0.72 * VAL(TORSORADIUS));
+			glTranslated(0.1, -upperArmLength, 0.15);
+			glScaled(0.72 * torsoRadius, upperArmLength, 0.72 * torsoRadius);
 			drawBox(1, 1, 1);
 			//right lower arm
-			glTranslated(0.1, -0.8 * VAL(UPPERARMLENGTH), 0.15);
-			glScaled(0.648 * VAL(TORSORADIUS), 0.8 * VAL(UPPERARMLENGTH), 0.648 * VAL(TORSORADIUS));
+			glTranslated(0.1, -0.8 * upperArmLength, 0.15);
+			glScaled(0.648 * torsoRadius, 0.8 * upperArmLength, 0.648 * torsoRadius);
 			drawBox(1, 1, 1);
 			glPopMatrix();
 
 		glPopMatrix();
 		//lower torso
 		glPushMatrix();
-		glTranslated(0, VAL(LOWERBODYHEIGHT) - 0.1, 0.5 * VAL(TORSORADIUS));
+		glTranslated(0, lowerBodyHeight - 0.1, 0.5 * torsoRadius);
 			glPushMatrix();
-			glScaled(VAL(TORSORADIUS), 0.1, 0.5 * VAL(TORSORADIUS));
+			glScaled(torsoRadius, 0.1, 0.5 * torsoRadius);
 			glRotated(-90, 1.0, 0.0, 0.0);
 			drawCylinder(1, 1, 1);
 			glPopMatrix();
 			//left leg
 			glPushMatrix();
-				glTranslated(-VAL(TORSORADIUS) / 1.7, -0.45 * VAL(LOWERBODYHEIGHT), 0);
-				glScaled(VAL(TORSORADIUS) / 2.5, 0.45 * VAL(LOWERBODYHEIGHT), VAL(TORSORADIUS) / 2.5);
-				glRotated(-90, 1.0, 0.0, 0.0);
-				//left upper leg
-				drawCylinder(1, 1, 1);
-				//left lower leg
-				glTranslated(0, 0, -VAL(TORSORADIUS) / 1.2);
-				glScaled(0.8, 1, 1.5);
-				drawCylinder(1, 1, 1);
+				glTranslated(-torsoRadius / 1.7, -0.45 * lowerBodyHeight, 0);
+				glPushMatrix();
+					glScaled(torsoRadius / 2.5, 0.45 * lowerBodyHeight, torsoRadius / 2.5);
+					glRotated(-90, 1.0, 0.0, 0.0);
+					//left upper leg
+					drawCylinder(1, 1, 1);
+					//left lower leg
+					glTranslated(0, 0, -0.45 * lowerBodyHeight);
+					glScaled(0.8, 1, 1.5);
+					drawCylinder(1, 1, 1);
+				glPopMatrix();
+				//left foot
+				glTranslated(-torsoRadius / 2.0, -0.5 * lowerBodyHeight, -torsoRadius / 2.0);
+				glScaled(1, 0.4, 1.35);
+				drawBox(1, 1, 1);
 			glPopMatrix();
 			//right leg
 			glPushMatrix();
-				glTranslated(VAL(TORSORADIUS) / 1.7, -0.45 * VAL(LOWERBODYHEIGHT), 0);
-				glScaled(VAL(TORSORADIUS) / 2.5, 0.45 * VAL(LOWERBODYHEIGHT), VAL(TORSORADIUS) / 2.5);
-				glRotated(-90, 1.0, 0.0, 0.0);
-				//right upper leg
-				drawCylinder(1, 1, 1);
-				//right lower leg
-				glTranslated(0, 0, -VAL(TORSORADIUS) / 1.2);
-				glScaled(0.8, 1, 1.5);
-				drawCylinder(1, 1, 1);				
+				glTranslated(torsoRadius / 1.7, -0.45 * lowerBodyHeight, 0);
+				glPushMatrix();
+					glScaled(torsoRadius / 2.5, 0.45 * lowerBodyHeight, torsoRadius / 2.5);
+					glRotated(-90, 1.0, 0.0, 0.0);
+					//right upper leg
+					drawCylinder(1, 1, 1);
+					//right lower leg
+					glTranslated(0, 0, -0.45 * lowerBodyHeight);
+					glScaled(0.8, 1, 1.5);
+					drawCylinder(1, 1, 1);
+				glPopMatrix();
+				//right foot
+				glTranslated(-torsoRadius / 2.0, -0.5 * lowerBodyHeight, -torsoRadius / 2.0);
+				glScaled(1, 0.4, 1.35);
+				drawBox(1, 1, 1);
 			glPopMatrix();
 		glPopMatrix();
 	glPopMatrix();
