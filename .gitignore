@@ -1,2 +1,5 @@
 *.opendb
 Debug/
+Release/
+fltk-1.3.3/
+modeler.sln.old
