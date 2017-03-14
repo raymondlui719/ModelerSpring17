@@ -39,6 +39,12 @@ void SampleModel::draw()
 	double upperArmLength = VAL(UPPERARMLENGTH);
 	double lowerBodyHeight = VAL(LOWERBODYHEIGHT);
 	double headSize = VAL(HEAD_SCALE);
+	double RshoulderRotationZY = VAL(RIGHT_SHOULDER_ZY_ROTATE);
+	double RshoulderRotationXY = VAL(RIGHT_SHOULDER_XY_ROTATE);
+	double LshoulderRotationZY = VAL(LEFT_SHOULDER_ZY_ROTATE);
+	double LshoulderRotationXY = VAL(LEFT_SHOULDER_XY_ROTATE);
+	double RarmRotation = VAL(RIGHT_ARM_ROTATE);
+	double LarmRotation = VAL(LEFT_ARM_ROTATE);
 
 	// draw the floor
 	setAmbientColor(.1f, .1f, .1f);
@@ -73,6 +79,10 @@ void SampleModel::draw()
 
 			//left arm
 			glPushMatrix();
+			glTranslated(-1.4 * torsoRadius, lowerBodyHeight + 0.6 * torsoHeight + torsoRadius*0.4, torsoRadius*0.4);
+			glRotated(LshoulderRotationZY, 1.0, 0.0, 0.0);
+			glRotated(-LshoulderRotationXY, 0.0, 0.0, 1.0);
+			glTranslated(1.4 * torsoRadius, -lowerBodyHeight - 0.6 * torsoHeight - torsoRadius*0.4, -torsoRadius*0.4);
 			//shoulder
 			glTranslated(-1.8 * torsoRadius, lowerBodyHeight + 0.6 * torsoHeight, 0);
 			glScaled(0.8 * torsoRadius, 0.8 * torsoRadius, 0.8 * torsoRadius);
@@ -82,6 +92,9 @@ void SampleModel::draw()
 			glScaled(0.72 * torsoRadius, upperArmLength, 0.72 * torsoRadius);
 			drawBox(1, 1, 1);
 			//left lower arm
+			glTranslated(0, 0, 0.36*torsoRadius);
+			glRotated(-LarmRotation, 1.0, 0.0, 0.0);
+			glTranslated(0, 0, -0.36*torsoRadius);
 			glTranslated(0.05, -0.8 * upperArmLength, 0.15);
 			glScaled(0.648 * torsoRadius, 0.8 * upperArmLength, 0.648 * torsoRadius);
 			drawBox(1, 1, 1);
@@ -89,6 +102,10 @@ void SampleModel::draw()
 
 			//right arm
 			glPushMatrix();
+			glTranslated(1.4*torsoRadius, lowerBodyHeight + torsoRadius*0.4 + 0.6 * torsoHeight, torsoRadius*0.4);
+			glRotated(RshoulderRotationZY, 1.0, 0.0, 0.0);
+			glRotated(-RshoulderRotationXY, 0.0, 0.0, 1.0);
+			glTranslated(-1.4*torsoRadius, -lowerBodyHeight - 0.6 * torsoHeight - torsoRadius*0.4, -torsoRadius*0.4);
 			//shoulder
 			glTranslated(torsoRadius, lowerBodyHeight + 0.6 * torsoHeight, 0);
 			glScaled(0.8 * torsoRadius, 0.8 * torsoRadius, 0.8 * torsoRadius);
@@ -98,6 +115,9 @@ void SampleModel::draw()
 			glScaled(0.72 * torsoRadius, upperArmLength, 0.72 * torsoRadius);
 			drawBox(1, 1, 1);
 			//right lower arm
+			glTranslated(0, 0, 0.36*torsoRadius);
+			glRotated(-RarmRotation, 1.0, 0.0, 0.0);
+			glTranslated(0, 0, -0.36*torsoRadius);
 			glTranslated(0.1, -0.8 * upperArmLength, 0.15);
 			glScaled(0.648 * torsoRadius, 0.8 * upperArmLength, 0.648 * torsoRadius);
 			drawBox(1, 1, 1);
@@ -303,6 +323,12 @@ int main()
 	controls[ROTATE] = ModelerControl("Rotate", -135, 135, 1, 0);
 	controls[HEAD_SCALE] = ModelerControl("Scale Head", 0, 1, 0.05f, 0.5f);
 	controls[HEAD_Y] = ModelerControl("Head Y Pos", 0.0f, 0.75f, 0.05f, 0.25f);
+	controls[LEFT_SHOULDER_ZY_ROTATE] = ModelerControl("Left Shoulder Rotate ZY", -180, 180, 1, 0);
+	controls[LEFT_SHOULDER_XY_ROTATE] = ModelerControl("Left Shoulder Rotate XY", 0, 180, 1, 0);
+	controls[LEFT_ARM_ROTATE] = ModelerControl("Left Arm Rotatation", 0, 90, 1, 0);
+	controls[RIGHT_ARM_ROTATE] = ModelerControl("Right Arm Rotatation", 0, 90, 1, 0);
+	controls[RIGHT_SHOULDER_ZY_ROTATE] = ModelerControl("Right Shoulder Rotate ZY", -180, 180, 1, 0);
+	controls[RIGHT_SHOULDER_XY_ROTATE] = ModelerControl("Right Shoulder Rotate XY", 180, 360, 1, 0);
     ModelerApplication::Instance()->Init(&createSampleModel, controls, NUMCONTROLS);
     return ModelerApplication::Instance()->Run();
 }
