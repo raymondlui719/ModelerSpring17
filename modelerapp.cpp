@@ -177,5 +177,12 @@ void ModelerApplication::RedrawLoop(void*)
 		ModelerApplication::Instance()->m_ui->m_modelerView->redraw();
 
 	// 1/50 second update is good enough
-	Fl::add_timeout(0.025, ModelerApplication::RedrawLoop, NULL);
+	ModelerApplication::Instance()->SetControlValue(LEFT_SHOULDER_ZY_ROTATE, (int)(ModelerApplication::Instance()->GetControlValue(LEFT_SHOULDER_ZY_ROTATE) + 10)%360);
+	//ModelerApplication::Instance()->SetControlValue(LEFT_SHOULDER_XY_ROTATE, ModelerApplication::Instance()->GetControlValue(LEFT_SHOULDER_XY_ROTATE) - 10);
+	ModelerApplication::Instance()->SetControlValue(RIGHT_SHOULDER_ZY_ROTATE, (int)(ModelerApplication::Instance()->GetControlValue(LEFT_SHOULDER_ZY_ROTATE) + 190) % 360);
+	//ModelerApplication::Instance()->SetControlValue(RIGHT_SHOULDER_XY_ROTATE, ModelerApplication::Instance()->GetControlValue(RIGHT_SHOULDER_XY_ROTATE) + 10);
+	ModelerApplication::Instance()->SetControlValue(LEFT_ARM_ROTATE, (int)(ModelerApplication::Instance()->GetControlValue(LEFT_SHOULDER_ZY_ROTATE) + 10)/4 );
+	ModelerApplication::Instance()->SetControlValue(RIGHT_ARM_ROTATE, (int)(ModelerApplication::Instance()->GetControlValue(RIGHT_SHOULDER_ZY_ROTATE) + 10) / 4);
+	Fl::add_timeout(0.025, ModelerApplication::RedrawLoop, NULL);	
+
 }
