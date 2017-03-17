@@ -5,15 +5,31 @@
 #include "modelerdraw.h"
 #include <FL/gl.h>
 #include <math.h>
+#include <iostream>
 
 #include "modelerglobals.h"
 
 // To make a SampleModel, we inherit off of ModelerView
 class SampleModel : public ModelerView 
 {
+
+private:
+	// Data read from the header of the BMP file
+	unsigned char header[54];
+	unsigned int dataPos;
+	unsigned int width, height;
+	unsigned int imageSize;
+	// Actual RGB data
+	unsigned char * data;
+
+	GLuint m_texture;
+
 public:
     SampleModel(int x, int y, int w, int h, char *label) 
         : ModelerView(x,y,w,h,label) { }
+
+	GLuint loadBMP_custom(const char * imagePath);
+	void drawTexture(const char * imagePath, GLuint& handle);
 
     virtual void draw();
 };
@@ -23,6 +39,50 @@ public:
 ModelerView* createSampleModel(int x, int y, int w, int h, char *label)
 { 
     return new SampleModel(x,y,w,h,label); 
+}
+
+
+// This function comes from http://www.opengl-tutorial.org/beginners-tutorials/tutorial-5-a-textured-cube/
+// as my helper function to draw texture
+GLuint SampleModel::loadBMP_custom(const char * imagePath) {
+	FILE * file = fopen(imagePath, "rb");
+	if (!file) { printf("Image could not be opened\n"); return 0; }
+	if (fread(header, 1, 54, file) != 54) {
+		printf("Not a correct BMP file\n");
+		return false;
+	}
+
+	dataPos = *(int*)&(header[0x0A]);
+	imageSize = *(int*)&(header[0x22]);
+	width = *(int*)&(header[0x12]);
+	height = *(int*)&(header[0x16]);
+
+	if (imageSize == 0) { imageSize = width*height * 3; }
+	if (dataPos == 0) { dataPos = 54; }
+
+	data = new unsigned char[imageSize];
+	fread(data, 1, imageSize, file);
+
+	fclose(file);
+}
+
+void SampleModel::drawTexture(const char * imagePath, GLuint& textureID) {
+	loadBMP_custom(imagePath);
+	if (data == NULL) {
+		std::cerr << "texture loading failed" << std::endl;
+	}
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glFlush();
 }
 
 // We are going to override (is that the right word?) the draw()
@@ -56,13 +116,14 @@ void SampleModel::draw()
 
 	setAmbientColor(.1f, .1f, .1f);
 	setDiffuseColor(COLOR_GREEN);
+	glEnable(GL_TEXTURE_2D);
 	glPushMatrix();
+	drawTexture("texture_robot.bmp", m_texture);
 	glTranslated(VAL(XPOS), VAL(YPOS), VAL(ZPOS));
 		//torso
 		glPushMatrix();
-			//upper body
+			//upper body			
 			glPushMatrix();
-			// TODO: change 2.25 to control value (lower body height)
 			glTranslated(-torsoRadius, lowerBodyHeight, 0);
 			glScaled(2.0 * torsoRadius, torsoHeight, torsoRadius);
 			drawBox(1, 1, 1);
@@ -170,6 +231,7 @@ void SampleModel::draw()
 			glPopMatrix();
 		glPopMatrix();
 	glPopMatrix();
+	glDisable(GL_TEXTURE_2D);
 	/*
 	// draw the sample model
 	setAmbientColor(.1f, .1f, .1f);
